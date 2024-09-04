@@ -1,0 +1,160 @@
+name: {{ Pipeline Name }}
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - {{ Branch Name }}
+    paths:
+      - '{{ Path to Your Files }}'
+
+  workflow_dispatch:
+    inputs:
+      BACKEND_API_IP:
+        type: string
+        default: '{{ BACKEND_API_IP }}'
+        required: false
+      TEST_VERSION:
+        type: string
+        default: '{{ TEST_VERSION }}'
+        required: false
+   
+
+env:
+  TEST_VERSION: ${{ inputs.TEST_VERSION || '{{ TEST_VERSION }}'}}
+  BACKEND_API_IP: ${{ inputs.BACKEND_API_IP || '{{ BACKEND_API_IP }}'}}
+  EMULATORSHOST_IP: '{{ EMULATORSHOST_IP }}'
+  EMULATOR_COUNT: '{{ EMULATOR_COUNT }}'
+  NTP_URL: '{{ NTP_URL }}'
+  DEVICE_ID: '{{ DEVICE_ID }}'
+  SYSADMIN_USERNAME: ${{ secrets.SYSADMIN_USERNAME }}
+  VIEWER_USERNAME:  ${{ secrets.VIEWER_USERNAME }}
+  CUSTOM_USERNAME:  ${{ secrets.CUSTOM_USERNAME }}
+  CUSTOM_VIEW_EDIT_USERNAME:  ${{ secrets.CUSTOM_VIEW_EDIT_USERNAME }}
+  CUSTOM_NOT_VIEW_USERNAME: ${{ secrets.CUSTOM_NOT_VIEW_USERNAME }}
+  IPV4: '{{ IPV4 }}'
+  SERVERPORT: '{{ SERVERPORT }}'
+  SERVERUSERNAME: '{{ SERVERUSERNAME }}'
+  SERVERPASSWORD: '{{ SERVERPASSWORD }}'
+  SERVERPATH: '{{ SERVERPATH }}'
+  USERNAME: ${{ secrets.USERNAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+  OPERATOR_USERNAME:  ${{ secrets.OPERATOR_USERNAME }}
+  CAMPUS: '{{ CAMPUS }}'
+  BUILDING: '{{ BUILDING }}'
+  FLOOR: '{{ FLOOR }}'
+  COORDINATES: '{{ COORDINATES }}'
+  RACK: '{{ RACK }}'
+  NEWKEY: '{{ NEWKEY }}'
+  PORT: '{{ PORT }}'
+  MODULE: '{{ MODULE }}'
+  TEST_FILE_NAME_CSV: '{{ TEST_FILE_NAME_CSV }}'
+  TEST_FILE_NAME_PDF: '{{ TEST_FILE_NAME_PDF }}'
+  DEVICE_INDEX_REPORTS: '{{ DEVICE_INDEX_REPORTS }}'
+  EMULATOR_IP: '{{ EMULATOR_IP }}'
+  EMULATOR_PORT: '{{ EMULATOR_PORT }}'
+  DEVICE_NAME: '{{ DEVICE_NAME }}'
+  VALID_IPV4: '{{ VALID_IPV4 }}'
+  VALID_IPV6: '{{ VALID_IPV6 }}'
+  INVALID_IPV4: '{{ INVALID_IPV4 }}'
+  INVALID_IPV6: '{{ INVALID_IPV6 }}'
+  TEMPLATE_NAME: '{{ TEMPLATE_NAME }}'
+  SCREENTIMEOUT: '{{ SCREENTIMEOUT }}'
+  DNS: '{{ DNS }}'
+  TRAP_IP: '{{ TRAP_IP }}'
+  NTP: '{{ NTP }}'
+  CONFIG_NAME: '{{ CONFIG_NAME }}'
+  PORT_SELECTOR: '{{ PORT_SELECTOR }}'
+  REMOTESERVERIPV4: '{{ REMOTESERVERIPV4 }}'
+  REMOTESERVERSERVERPORT: '{{ REMOTESERVERSERVERPORT }}'
+  REMOTESERVERSERVERUSERNAME: '{{ REMOTESERVERSERVERUSERNAME }}'
+  REMOTESERVERSERVERPASSWORD: '{{ REMOTESERVERSERVERPASSWORD }}'
+  REMOTESERVERSERVERPATH: '{{ REMOTESERVERSERVERPATH }}'
+
+jobs:
+  build:
+    runs-on: [self-hosted, qa_local_runner]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup local files
+        shell: bash
+        run: |
+          #!/bin/bash
+          set -x
+          # Replacing Placeholders in constants
+            sed -i -e "s/{{TEST_VERSION}}/${{ env.TEST_VERSION }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{BACKEND_API_IP}}/${{ env.BACKEND_API_IP }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{EMULATORSHOST_IP}}/${{ env.EMULATORSHOST_IP }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{EMULATOR_COUNT}}/${{ env.EMULATOR_COUNT }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{NTP_URL}}/${{ env.NTP_URL }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{DEVICE_ID}}/${{ env.DEVICE_ID }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{SYSADMIN_USERNAME}}/${{ secrets.SYSADMIN_USERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{VIEWER_USERNAME}}/${{ secrets.VIEWER_USERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{CUSTOM_USERNAME}}/${{ secrets.CUSTOM_USERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{CUSTOM_VIEW_EDIT_USERNAME}}/${{ secrets.CUSTOM_VIEW_EDIT_USERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{CUSTOM_NOT_VIEW_USERNAME}}/${{ secrets.CUSTOM_NOT_VIEW_USERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{IPV4}}/${{ env.IPV4 }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{SERVERPORT}}/${{ env.SERVERPORT }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{SERVERUSERNAME}}/${{ env.SERVERUSERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{SERVERPASSWORD}}/${{ env.SERVERPASSWORD }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{SERVERPATH}}/${{ env.SERVERPATH }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{USERNAME}}/${{ secrets.USERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{PASSWORD}}/${{ secrets.PASSWORD }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{OPERATOR_USERNAME}}/${{ secrets.OPERATOR_USERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{CAMPUS}}/${{ env.CAMPUS }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{BUILDING}}/${{ env.BUILDING }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{FLOOR}}/${{ env.FLOOR }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{COORDINATES}}/${{ env.COORDINATES }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{RACK}}/${{ env.RACK }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{NEWKEY}}/${{ env.NEWKEY }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{PORT}}/${{ env.PORT }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{MODULE}}/${{ env.MODULE }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{TEST_FILE_NAME_CSV}}/${{ env.TEST_FILE_NAME_CSV }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{TEST_FILE_NAME_PDF}}/${{ env.TEST_FILE_NAME_PDF }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{DEVICE_INDEX_REPORTS}}/${{ env.DEVICE_INDEX_REPORTS }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{EMULATOR_IP}}/${{ env.EMULATOR_IP }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{EMULATOR_PORT}}/${{ env.EMULATOR_PORT }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{DEVICE_NAME}}/${{ env.DEVICE_NAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{VALID_IPV4}}/${{ env.VALID_IPV4 }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{VALID_IPV6}}/${{ env.VALID_IPV6 }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{INVALID_IPV4}}/${{ env.INVALID_IPV4 }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+                        sed -i -e "s/{{INVALID_IPV6}}/${{ env.INVALID_IPV6 }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{TEMPLATE_NAME}}/${{ env.TEMPLATE_NAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{SCREENTIMEOUT}}/${{ env.SCREENTIMEOUT }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{DNS}}/${{ env.DNS }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{TRAP_IP}}/${{ env.TRAP_IP }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{NTP}}/${{ env.NTP }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{CONFIG_NAME}}/${{ env.CONFIG_NAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{PORT_SELECTOR}}/${{ env.PORT_SELECTOR }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{REMOTESERVERIPV4}}/${{ env.REMOTESERVERIPV4 }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{REMOTESERVERSERVERPORT}}/${{ env.REMOTESERVERSERVERPORT }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{REMOTESERVERSERVERUSERNAME}}/${{ env.REMOTESERVERSERVERUSERNAME }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{REMOTESERVERSERVERPASSWORD}}/${{ env.REMOTESERVERSERVERPASSWORD }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+            sed -i -e "s/{{REMOTESERVERSERVERPATH}}/${{ env.REMOTESERVERSERVERPATH }}/g" "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+
+            cat "$GITHUB_WORKSPACE/cypress/constants-cypress.js"
+
+      - name: Install NPM Dependencies
+        shell: bash
+        run: |
+          #!/bin/bash
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          nvm install 20.11.1
+          nvm use 20.11.1
+          pushd $GITHUB_WORKSPACE
+          npm install --verbose
+          popd
+
+      - name: Run Cypress tests
+        shell: bash
+        run: |
+          #!/bin/bash
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          pushd $GITHUB_WORKSPACE
+          npx cypress run 
+          popd
+

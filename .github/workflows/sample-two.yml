@@ -1,0 +1,55 @@
+name: '{{ Pipeline Name }}'
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - '{{ Branch Name }}'
+    paths:
+      - '{{ Path to Your Files }}'
+
+  workflow_dispatch:
+    inputs:
+      BACKEND_API_IP:
+        description: {{ Enter Description }}
+        required: false
+        default: {{ DEFAULT_BACKEND_API_IP }}
+
+env:
+  BACKEND_API_IP: ${{ github.event.inputs.BACKEND_API_IP }}
+  EMAIL: ${{ secrets.EMAIL }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+
+jobs:
+  build:
+    runs-on: [self-hosted, {{ RUNNER_LABEL }}]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2    
+
+      - name: Setup local files
+        run: |
+          sed -i -e "s/{{EMAIL}}/${EMAIL}/g" "$GITHUB_WORKSPACE/{{ FILE_PATH }}"
+          sed -i -e "s/{{PASSWORD}}/${PASSWORD}/g" "$GITHUB_WORKSPACE/{{ FILE_PATH }}"
+
+      - name: Install NPM Dependencies
+        shell: bash
+        run: |
+          #!/bin/bash
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          nvm install {{ NODE_VERSION }}
+          nvm use {{ NODE_VERSION }}
+          pushd $GITHUB_WORKSPACE
+          npm install --verbose
+          popd
+
+      - name: Run cypress tests
+        shell: bash
+        run: |
+          #!/bin/bash
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          pushd $GITHUB_WORKSPACE
+          npx cypress run 
+          popd

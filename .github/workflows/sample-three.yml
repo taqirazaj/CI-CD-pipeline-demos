@@ -1,0 +1,55 @@
+name: '{{ Pipeline Name }}'
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - '{{ Branch Name }}'
+    paths:
+      - '{{ Path to Your Files }}'
+
+
+jobs:
+  build:
+    runs-on: [self-hosted, {{ Runner Label }}]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install NPM Dependencies
+        shell: bash
+        run: |
+          #!/bin/bash
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          nvm install {{ Node.js Version }}
+          nvm use {{ Node.js Version }}
+          pushd $GITHUB_WORKSPACE
+          npm install --verbose
+          popd
+ 
+      - name: Run cypress tests
+        shell: bash
+        run: |
+          #!/bin/bash
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          pushd $GITHUB_WORKSPACE
+          npx cypress run 
+          popd
+
+      - name: Generate Cypress Report
+        shell: bash
+        run: |
+            #!/bin/bash
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            pushd $GITHUB_WORKSPACE
+            npx cypress-mochawesome-reporter generate
+            popd
+  
+      - name: Upload Cypress Report
+        uses: actions/upload-artifact@v3
+        with:
+            name: cypress-report
+            path: {{ Report Path }}
